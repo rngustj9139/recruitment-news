@@ -1,0 +1,27 @@
+name: 'recruitment-news'
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+      # KST 기준 오후 6시에 한 번 수행하도록 세팅
+      # cron: 분 시간 월 일 년 (UTC임을 유의)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps: # job이 실행되었을 때 처리 단계
+    - uses: actions/checkout@v1 # 최신의 커밋으로 가져옴
+    - name: Set up Python # 파이썬 설치
+      uses: actions/setup-python@v1 # 최신의 파이썬 버전 설치
+    - name: Install dependencies # 파이썬 필요 라이브러리
+      run: |
+        pip install --upgrade pip
+        pip install beautifulsoup4
+        pip install pytz
+        pip install PyGithub
+        pip install python-dateutil
+    - name: Run Crawler # 실제 파이썬 크롤러 실행 단계
+      run: |
+        python main.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
