@@ -16,12 +16,13 @@ jobs:
     - name: Install dependencies # 파이썬 필요 라이브러리
       run: |
         pip install --upgrade pip
-        pip install beautifulsoup4
+        pip install selenium==3.141
         pip install pytz
         pip install PyGithub
         pip install python-dateutil
+        pip install datetime
     - name: Run Crawler # 실제 파이썬 크롤러 실행 단계
       run: |
-        python main.py
+        python DynamicResourceCrawler.py
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
