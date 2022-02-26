@@ -1,3 +1,5 @@
+# yaml 파일은 반드시 .github/workflows에 있어야 github action이 동작함
+
 name: 'recruitment-news'
 
 on:
