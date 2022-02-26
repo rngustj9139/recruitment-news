@@ -44,6 +44,7 @@ def isDateInRange(created_at):
 
 <br>
 
+----------------------------------------------------------------------------
 * [참고 링크] 네이버 커리어 (https://recruit.navercorp.com/naver/job/list/developer)
 * [참고 링크] 라인 커리어 (https://careers.linecorp.com/jobs?ca=Engineering&ci=Seoul,Bundang&co=East%20Asia&fi=Server-side)
 * [참고 링크] 깃허브 액션 레퍼런스 (https://github.com/features/actions)
