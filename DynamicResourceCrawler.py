@@ -19,75 +19,97 @@ def isDateInRange(created_at):
 
     return (today > created_at) and (created_at > yesterday) # 대상 게시글은 24시간 전 ~ 작동 시간
 
-titleList = []
-dayAndTimeList = []
+try:
+    options = webdriver.ChromeOptions()
+    options.add_argument("start-maximized")
+    options.add_argument("lang=ko_KR")
+    options.add_argument('headless') # headless로 옵션을 설정해야 리눅스 위에서 오류가 발생하지 않는다.
+    options.add_argument('window-size=1920x1080')
+    options.add_argument("disable-gpu")
+    options.add_argument("--no-sandbox")
 
-#===Naver career 크롤링 시작===
-browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
-site = "https://recruit.navercorp.com/naver/job/list/developer"
-browser.get(site) # 브라우저 열기
-browser.implicitly_wait(10) # 로딩이 끝날 때 까지 10초 까지는 기다림
-browser.find_element_by_css_selector('button.more_btn').click() # 더보기 클릭
-time.sleep(1)
-browser.find_element_by_css_selector('button.more_btn').click() # 더보기 클릭
-time.sleep(1)
+    titleList = []
+    dayAndTimeList = []
 
-elements = browser.find_elements_by_css_selector('.card_list > ul > li')
+    #===Naver career 크롤링 시작===
+    browser = webdriver.Chrome('chromedriver', chrome_options=options) # 크롬 드라이버 경로
+    # browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
+    site = "https://recruit.navercorp.com/naver/job/list/developer"
+    browser.get(site) # 브라우저 열기
+    browser.maximize_window()
+    browser.implicitly_wait(10) # 로딩이 끝날 때 까지 10초 까지는 기다림
+    browser.find_element_by_css_selector('button.more_btn').click() # 더보기 클릭
+    time.sleep(1)
+    browser.find_element_by_css_selector('button.more_btn').click() # 더보기 클릭
+    time.sleep(1)
 
-for element in elements:
-    name = element.find_element_by_css_selector('.crd_tit').text
-    dayAndTime = element.find_element_by_css_selector('.crd_date').text
+    elements = browser.find_elements_by_css_selector('.card_list > ul > li')
 
-    # print([name], [dayAndTime])
-    titleList.append(name)
-    dayAndTimeList.append(dayAndTime)
-#===Naver career 크롤링 끝===
+    for element in elements:
+        name = element.find_element_by_css_selector('.crd_tit').text
+        dayAndTime = element.find_element_by_css_selector('.crd_date').text
 
-#===Line career 크롤링 시작===
-browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
-site = "https://careers.linecorp.com/jobs?ca=Engineering&ci=Seoul,Bundang&co=East%20Asia"
-browser.get(site) # 브라우저 열기
-browser.implicitly_wait(100) # 로딩이 끝날 때 까지 10초 까지는 기다림
-time.sleep(2) # 조금 더 딜레이
+        # print([name], [dayAndTime])
+        titleList.append(name)
+        dayAndTimeList.append(dayAndTime)
+    #===Naver career 크롤링 끝===
 
-elements = browser.find_elements_by_css_selector('.job_list > li')
+    #===Line career 크롤링 시작===
+    browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
+    site = "https://careers.linecorp.com/jobs?ca=Engineering&ci=Seoul,Bundang&co=East%20Asia"
+    browser.get(site) # 브라우저 열기
+    browser.maximize_window()
+    browser.implicitly_wait(100) # 로딩이 끝날 때 까지 10초 까지는 기다림
+    time.sleep(2) # 조금 더 딜레이
 
-for element in elements:
-    name = element.find_element_by_css_selector('a > .title').text
-    dayAndTime = element.find_element_by_css_selector('a > .date').text
+    elements = browser.find_elements_by_css_selector('.job_list > li')
 
-    # print([name], [dayAndTime])
-    titleList.append(name)
-    dayAndTimeList.append(dayAndTime)
-#===Line career 크롤링 끝===
+    for element in elements:
+        name = element.find_element_by_css_selector('a > .title').text
+        dayAndTime = element.find_element_by_css_selector('a > .date').text
 
-issueBody = ''
+        # print([name], [dayAndTime])
+        titleList.append(name)
+        dayAndTimeList.append(dayAndTime)
+    #===Line career 크롤링 끝===
 
-for x, y in zip(titleList, dayAndTimeList):
-    if(y[13:17] == "채용시까지"):
-        published_at = y[0:10]
-        published_at = published_at.replace('.', '-') + " 00:00:00"  # 글 등록 시간은 가져오기 불가능하기 때문에 0시(자정)라고 가정
-    else :
-        published_at = y[0:10]
-        published_at = published_at.replace('.', '-') + " 00:00:00"  # 글 등록 시간은 가져오기 불가능하기 때문에 0시(자정)라고 가정
+    issueBody = ''
 
-    item = str(published_at) + ' ' + str(x).replace("\n", "").replace(' ', '').strip()
+    for x, y in zip(titleList, dayAndTimeList):
+        if (y[13:17] == "채용시까지"):
+            published_at = y[0:10]
+            published_at = published_at.replace('.', '-') + " 00:00:00"  # 글 등록 시간은 가져오기 불가능하기 때문에 0시(자정)라고 가정
+        else:
+            published_at = y[0:10]
+            published_at = published_at.replace('.', '-') + " 00:00:00"  # 글 등록 시간은 가져오기 불가능하기 때문에 0시(자정)라고 가정
 
-    if('Robotics' not in str(x) and isDateInRange(str(published_at))):
-        issueBody += item
-    else:
-        print('[filtered]', item)
+        item = str(published_at) + ' ' + str(x).replace("\n", "").replace(' ', '').strip()
 
-print('================================================================')
+        if ('Robotics' not in str(x) and isDateInRange(str(published_at))):
+            issueBody += item
+        else:
+            print('[filtered]', item)
 
-issueTitle = "개발자 모집 글 모음(%s)" % (today.strftime("%Y년 %m월 %d일 %H시"))
-print(issueTitle)
-print(issueBody)
+    print('================================================================')
 
-#print(os.environ)
-GITHUB_TOKEN = os.environ['TOKEN_GITHUB'] # 시스템 환경변수에 깃허브 토큰 저장되어있음 (Expires on Wed, May 11 2022) (만료되면 깃허브 settings-developer settings-personal access token에서 다시 토큰 생성하고 환경변수 등록해야함)
-REPO_NAME = "recruitment-news"
-repo = Github(GITHUB_TOKEN).get_user().get_repo(REPO_NAME)
-if (issueBody != '' and REPO_NAME == "recruitment-news"):
-    res = repo.create_issue(title=issueTitle, body=issueBody)
-    print(res)
+    issueTitle = "개발자 모집 글 모음(%s)" % (today.strftime("%Y년 %m월 %d일 %H시"))
+    print(issueTitle)
+    print(issueBody)
+
+    # print(os.environ)
+    GITHUB_TOKEN = os.environ[
+        'TOKEN_GITHUB']  # 시스템 환경변수에 깃허브 토큰 저장되어있음 (Expires on Wed, May 11 2022) (만료되면 깃허브 settings-developer settings-personal access token에서 다시 토큰 생성하고 환경변수 등록해야함)
+    REPO_NAME = "recruitment-news"
+    repo = Github(GITHUB_TOKEN).get_user().get_repo(REPO_NAME)
+    if (issueBody != '' and REPO_NAME == "recruitment-news"):
+        res = repo.create_issue(title=issueTitle, body=issueBody)
+        print(res)
+except Exception as e:
+    print(e)
+    browser.quit()
+finally:
+    print("finally...")
+    browser.quit()
+
+
+
