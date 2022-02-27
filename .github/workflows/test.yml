@@ -1,0 +1,41 @@
+# yaml 파일은 반드시 .github/workflows에 있어야 github action이 동작함
+################################
+################################
+name: 'recruitment-news'
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+      # KST 기준 오후 6시에 한 번 수행하도록 세팅
+      # cron: 분 시간 월 일 년 (UTC임을 유의)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps: # job이 실행되었을 때 처리 단계
+    - uses: actions/checkout@v1 # 최신의 커밋으로 가져옴
+    - name: Set up Python # 파이썬 설치
+      uses: actions/setup-python@v1 # 최신의 파이썬 버전 설치
+    - name: Install dependencies # 파이썬 필요 라이브러리 설치
+      run: |
+        pip install --upgrade pip
+        pip install selenium==3.141
+        pip install pytz
+        pip install PyGithub
+        pip install python-dateutil
+        pip install datetime
+
+    - name: Install ubuntu package # 우분투 관련 패키지도 설치 and 크롬 드라이버 설치 후 압축 풀기
+      run: |
+        sudo apt-get install fonts-unfonts-core
+        sudo apt-get install fonts-unfonts-extra
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add
+        sudo apt-get install google-chrome-stable
+        wget https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip
+        unzip ./chromedriver_linux64.zip
+
+    - name: Run Crawler # 실제 파이썬 크롤러 실행 단계
+      run: |
+        python ./DynamicResourceCrawler.py
+      env:
+        TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
