@@ -56,7 +56,6 @@ try:
     #===Naver career 크롤링 끝===
 
     #===Line career 크롤링 시작===
-    browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
     site = "https://careers.linecorp.com/jobs?ca=Engineering&ci=Seoul,Bundang&co=East%20Asia"
     browser.get(site) # 브라우저 열기
     browser.maximize_window()
