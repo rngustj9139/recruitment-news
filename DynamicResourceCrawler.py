@@ -6,6 +6,7 @@ import os # 환경 변수를 사용하기 위함
 import time # 셀레니움에 딜레이를 주기위해 사용
 from selenium import webdriver # 동적 리소스 크롤링 시에는(or 로그인) requests 대신 selenium을 사용해야 한다. (Selenium 3.x 버전을 사용하기)
 from selenium.webdriver.common.keys import Keys # 셀레니움 사용시 키보드의 엔터키와 END키를 사용하기 위해 사용
+from webdriver_manager.chrome import ChromeDriverManager # 리눅스 위에서 크롬드라이버 절대경로를 못찾으므로 이를 해결하기 위해 ChromeDriverManager 사용 (pip install webdriver-manager)
 
 kst = timezone('Asia/Seoul') # KST == Korea Standard Time
 today = datetime.datetime.now(kst)
@@ -32,8 +33,8 @@ try:
     dayAndTimeList = []
 
     #===Naver career 크롤링 시작===
-    browser = webdriver.Chrome('chromedriver', chrome_options=options) # 크롬 드라이버 경로
-    # browser = webdriver.Chrome('C:/chromedriver.exe') # 크롬 드라이버 경로
+    browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    # browser = webdriver.Chrome('C:/chromedriver.exe', chrome_options=options) # 크롬 드라이버 경로
     site = "https://recruit.navercorp.com/naver/job/list/developer"
     browser.get(site) # 브라우저 열기
     browser.maximize_window()
