@@ -16,9 +16,9 @@ print("================================================================")
 def isDateInRange(created_at):
     suffix_kst = '.000001+09:00' # (UTC의 기준시간보다 9시간이 빠르다는 의미이다. KST==UTC+09:00)
     created_at = parse(created_at + suffix_kst) # (이 크롤러가 작동할 서버의 타임 존은 UTC(Github)로 날짜 생성시 KST 타임으로 변환 해주어야함) (parse를 통해 문자열 날짜를 DATE로 변환한다.)
-    yesterday = today - datetime.timedelta(1) # 1 days ago 표현
+    yesterday = today - datetime.timedelta(2) # 2 days ago 표현
 
-    return (today > created_at) and (created_at > yesterday) # 대상 게시글은 24시간 전 ~ 작동 시간
+    return (today > created_at) and (created_at > yesterday) # 대상 게시글은 48시간 전 ~ 작동 시간
 
 try:
     options = webdriver.ChromeOptions()
