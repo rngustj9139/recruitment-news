@@ -22,7 +22,7 @@ Selenium|
 
 <br>
 
-(KST 기준 오후 6시에 한 번 크롤러가 자동적으로 작동하여 데이터를 수집합니다.)
+(KST 기준 오후 6시에 한 번 동적 리소스 크롤러가 자동적으로 작동하여 데이터를 수집합니다.)
 ```python
 def isDateInRange(created_at):
     suffix_kst = '.000001+09:00' # UTC의 기준시간보다 9시간이 빠르다는 의미이다. KST==UTC+09:00
